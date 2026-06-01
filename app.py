@@ -1,3 +1,4 @@
+import logging
 import os
 import random
 from pathlib import Path
@@ -33,6 +34,7 @@ from models import (
 
 app = Flask(__name__)
 app.config.from_object(Config)
+logger = logging.getLogger(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.jinja_env.auto_reload = True
@@ -334,7 +336,7 @@ def ensure_database_ready():
     if _database_ready:
         return
 
-    with app.app_context():
+    try:
         db.create_all()
         inspector = inspect(db.engine)
 
@@ -347,8 +349,12 @@ def ensure_database_ready():
 
         sync_historical_events_content()
         sync_national_holidays_content()
-        sync_learning_content()
+        sync_learning_content(commit=False)
         db.session.commit()
+    except Exception:
+        db.session.rollback()
+        logger.exception('Database initialization failed')
+        raise
 
     _database_ready = True
 
@@ -421,7 +427,7 @@ def build_learning_stats(user):
     return stats
 
 
-def sync_learning_content():
+def sync_learning_content(commit=True):
     existing_quizzes = Quiz.query.order_by(Quiz.id.asc()).all()
     existing_by_key = {
         ((quiz.mode or 'quiz'), quiz.question): quiz
@@ -461,7 +467,8 @@ def sync_learning_content():
     if stale_quiz_ids:
         UserProgress.query.filter(UserProgress.object_id.in_(stale_quiz_ids)).delete(synchronize_session=False)
 
-    db.session.commit()
+    if commit:
+        db.session.commit()
 
 
 @app.route('/health')
@@ -469,11 +476,24 @@ def health():
     return 'ok', 200
 
 
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
+
+
 @app.before_request
 def prepare_database():
-    if request.endpoint == 'health':
+    if request.endpoint in ('health', 'favicon'):
         return
-    ensure_database_ready()
+
+    try:
+        ensure_database_ready()
+    except Exception:
+        return (
+            'Ошибка базы данных. Проверьте DATABASE_URL и логи сервиса.',
+            503,
+            {'Content-Type': 'text/plain; charset=utf-8'},
+        )
 
 
 @login.user_loader
@@ -1053,6 +1073,16 @@ def remove_from_collection(id):
     db.session.commit()
     flash('Материал удален из коллекции.')
     return redirect(url_for('profile'))
+
+
+def _database_uri_for_logs():
+    uri = app.config['SQLALCHEMY_DATABASE_URI']
+    if '@' in uri:
+        return uri.split('@', 1)[0].rsplit('/', 1)[0] + '/***@' + uri.split('@', 1)[1]
+    return uri
+
+
+logger.info('Database configured: %s', _database_uri_for_logs())
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
