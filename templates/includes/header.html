@@ -1,0 +1,223 @@
+{% set current_endpoint = request.endpoint or '' %}
+{% set nav_items = [
+    ('index', 'Главная'),
+    ('treasures', 'Сокровища'),
+    ('places_page', 'Места'),
+    ('historical_events_page', 'События'),
+    ('national_holidays_page', 'Праздники'),
+    ('heroes_page', 'Герои'),
+    ('quizzes_page', 'Тесты'),
+    ('help_page', 'Справка')
+] %}
+
+<header class="sticky top-0 z-50 bg-white shadow-md border-b-2 border-red-500">
+    <div class="container mx-auto max-w-[1720px] px-4 md:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16 md:h-18 lg:h-20">
+
+            <!-- Логотип - красно-зелёный акцент -->
+            <a href="{{ url_for('index') }}" class="group flex items-center gap-3 shrink-0">
+                <img src="{{ asset_url('img/site/герб.png') }}" alt="Логотип БеларусИстория" class="h-9 w-auto object-contain md:h-11 lg:h-12 transition-all duration-300 group-hover:scale-105">
+
+                <div class="relative">
+                    <span class="block text-xl md:text-2xl lg:text-3xl font-black tracking-tight bg-gradient-to-r from-red-600 via-red-500 to-green-600 bg-clip-text text-transparent">
+                        NASLEDIE
+                    </span>
+                    <div class="flex items-center gap-1.5 mt-0.5">
+                        <span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>
+                        <span class="text-[9px] md:text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-500">Платформа наследия</span>
+                        <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Навигация - красная -->
+            <nav class="hidden xl:flex items-center justify-center gap-0.5 bg-gray-50 rounded-full p-1">
+                {% for endpoint, label in nav_items %}
+                    <a
+                        href="{{ url_for(endpoint) }}"
+                        class="relative px-3 lg:px-4 py-1.5 lg:py-2 text-sm font-medium rounded-full transition-all duration-200 whitespace-nowrap
+                               {% if current_endpoint == endpoint %}
+                                   text-white bg-red-500 shadow-md
+                               {% else %}
+                                   text-gray-600 hover:text-red-500 hover:bg-red-50
+                               {% endif %}"
+                    >
+                        {{ label }}
+                    </a>
+                {% endfor %}
+            </nav>
+
+            <!-- Правая часть - красная -->
+            <div class="flex items-center gap-1 md:gap-2">
+                {% if current_user.is_authenticated %}
+                    <div class="relative" data-user-dropdown>
+                        <button type="button" data-user-dropdown-trigger
+                                class="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-2 py-1.5 md:px-3 md:py-1.5 transition-all duration-200 hover:border-red-400 hover:shadow-sm group">
+                            <div class="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full bg-red-500 text-white shadow-sm">
+                                <span class="text-xs md:text-sm font-bold">{{ current_user.username[0]|upper }}</span>
+                            </div>
+                            <span class="hidden md:inline-block text-sm font-medium text-gray-700 max-w-[100px] truncate">{{ current_user.username }}</span>
+                            <i class="fas fa-chevron-down text-[10px] md:text-xs text-gray-400 transition-transform duration-200 group-data-[open=true]:rotate-180"></i>
+                        </button>
+
+                        <div data-user-dropdown-menu
+                             class="absolute right-0 top-full mt-2 w-64 rounded-xl border border-gray-200 bg-white shadow-lg opacity-0 invisible translate-y-[-8px] transition-all duration-200 z-50">
+                            <div class="p-1.5">
+                                <div class="px-3 py-3 border-b border-gray-100 bg-gray-50 rounded-t-xl">
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-white shadow-sm">
+                                            <span class="text-sm font-bold">{{ current_user.username[0]|upper }}</span>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-semibold text-gray-800 truncate">{{ current_user.username }}</p>
+                                            <p class="text-xs text-gray-400 truncate">{{ current_user.email }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <span class="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold text-red-600">
+                                            {{ current_user.role_label }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="py-1">
+                                    <a href="{{ url_for('profile') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-600 transition-colors duration-200 hover:bg-red-50 hover:text-red-600">
+                                        <i class="fas fa-user-circle w-4 text-gray-400"></i>
+                                        <span>Профиль</span>
+                                    </a>
+                                    <a href="{{ url_for('profile') }}#collection" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-600 transition-colors duration-200 hover:bg-red-50 hover:text-red-600">
+                                        <i class="fas fa-bookmark w-4 text-gray-400"></i>
+                                        <span>Коллекция</span>
+                                        <span class="ml-auto text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">{{ current_user.collection.count() }}</span>
+                                    </a>
+                                </div>
+                                {% if current_user.is_staff() %}
+                                    <div class="border-t border-gray-100 my-1"></div>
+                                    <div class="py-1">
+                                        <a href="{{ url_for('admin.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-600 transition-colors duration-200 hover:bg-red-50 hover:text-red-600">
+                                            <i class="fas fa-shield-alt w-4 text-gray-400"></i>
+                                            <span>Панель управления</span>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                                <div class="border-t border-gray-100 my-1"></div>
+                                <div class="py-1">
+                                    <a href="{{ url_for('logout') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-red-600 transition-colors duration-200 hover:bg-red-50">
+                                        <i class="fas fa-sign-out-alt w-4"></i>
+                                        <span>Выйти</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="{{ url_for('login') }}"
+                       class="hidden sm:inline-flex items-center px-3 md:px-4 py-2 text-sm font-medium text-gray-600 transition-colors duration-200 hover:text-red-500 rounded-lg hover:bg-red-50">
+                        Войти
+                    </a>
+                    <a href="{{ url_for('register') }}"
+                       class="inline-flex items-center gap-2 rounded-full bg-red-500 px-4 md:px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-red-600 hover:shadow-md">
+                        <i class="fas fa-user-plus text-xs"></i>
+                        <span class="hidden sm:inline">Регистрация</span>
+                        <span class="sm:hidden">Рег.</span>
+                    </a>
+                {% endif %}
+
+                <button type="button" data-mobile-nav-toggle
+                        class="xl:hidden inline-flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 text-gray-500 transition-all duration-200 hover:border-red-400 hover:text-red-500 hover:bg-red-50">
+                    <i class="fas fa-bars text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Мобильная навигация -->
+        <div id="mobile-navigation" class="hidden xl:hidden border-t border-gray-100 py-3">
+            <nav class="grid grid-cols-2 gap-1">
+                {% for endpoint, label in nav_items %}
+                    <a
+                        href="{{ url_for(endpoint) }}"
+                        class="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200
+                               {% if current_endpoint == endpoint %}
+                                   bg-red-50 text-red-600
+                               {% else %}
+                                   text-gray-600 hover:bg-gray-50 hover:text-red-500
+                               {% endif %}"
+                    >
+                        {% set icons = {
+                            'index': 'fa-home',
+                            'treasures': 'fa-gem',
+                            'places_page': 'fa-map-marker-alt',
+                            'historical_events_page': 'fa-landmark',
+                            'national_holidays_page': 'fa-calendar-alt',
+                            'heroes_page': 'fa-user-tie',
+                            'quizzes_page': 'fa-scroll',
+                            'help_page': 'fa-question-circle'
+                        } %}
+                        <i class="fas {{ icons[endpoint] }} w-4 text-sm"></i>
+                        <span>{{ label }}</span>
+                    </a>
+                {% endfor %}
+            </nav>
+        </div>
+    </div>
+    <script>
+    (function() {
+        const containers = document.querySelectorAll('[data-user-dropdown]');
+
+        containers.forEach(container => {
+            const trigger = container.querySelector('[data-user-dropdown-trigger]');
+            const menu = container.querySelector('[data-user-dropdown-menu]');
+            let isOpen = false;
+
+            function openDropdown() {
+                if (!menu) return;
+                isOpen = true;
+                menu.classList.remove('invisible', 'opacity-0', 'translate-y-[-8px]');
+                menu.classList.add('visible', 'opacity-100', 'translate-y-0');
+                trigger?.setAttribute('data-open', 'true');
+            }
+
+            function closeDropdown() {
+                if (!menu) return;
+                isOpen = false;
+                menu.classList.add('invisible', 'opacity-0', 'translate-y-[-8px]');
+                menu.classList.remove('visible', 'opacity-100', 'translate-y-0');
+                trigger?.removeAttribute('data-open');
+            }
+
+            function toggleDropdown(e) {
+                e.stopPropagation();
+                if (isOpen) {
+                    closeDropdown();
+                } else {
+                    openDropdown();
+                }
+            }
+
+            trigger?.addEventListener('click', toggleDropdown);
+            document.addEventListener('click', function(e) {
+                if (isOpen && !container.contains(e.target)) {
+                    closeDropdown();
+                }
+            });
+        });
+    })();
+
+    (function() {
+        const toggleBtn = document.querySelector('[data-mobile-nav-toggle]');
+        const mobileNav = document.getElementById('mobile-navigation');
+        let isOpen = false;
+
+        if (toggleBtn && mobileNav) {
+            toggleBtn.addEventListener('click', function() {
+                if (isOpen) {
+                    mobileNav.classList.add('hidden');
+                    isOpen = false;
+                } else {
+                    mobileNav.classList.remove('hidden');
+                    isOpen = true;
+                }
+            });
+        }
+    })();
+</script>
+</header>

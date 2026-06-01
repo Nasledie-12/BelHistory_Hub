@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="py-16 bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 max-w-7xl">
+
+        <!-- Верхний баннер с твоим аистом -->
+        <div class="relative mb-10 overflow-hidden rounded-2xl bg-white border border-gray-200 shadow-md">
+    <div class="absolute inset-0 opacity-5">
+        <img src="{{ url_for('static', filename='img/site/6.jpg') }}" alt="Аист" class="w-full h-full object-cover">
+    </div>
+    <div class="relative z-10 p-8 md:p-10">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="inline-flex items-center gap-2 bg-red-50 rounded-full px-3 py-1 mb-4">
+                    <i class="fas fa-gem text-red-500 text-xs"></i>
+                    <span class="text-red-600 text-xs font-bold uppercase tracking-wider">Каталог материалов</span>
+                </div>
+                <h1 class="text-3xl md:text-5xl font-bold">
+                    <span class="bg-gradient-to-r from-red-600 to-green-600 bg-clip-text text-transparent">Сокровища и артефакты</span>
+                </h1>
+                <div class="w-20 h-1 bg-gradient-to-r from-red-500 to-green-500 mt-4 mb-5 rounded-full"></div>
+                <p class="text-gray-500 max-w-2xl leading-relaxed text-lg">
+                    Уникальные артефакты, религиозные святыни, предметы культуры и исторические ценности Беларуси.
+                </p>
+            </div>
+            <div class="hidden lg:block">
+                <img src="{{ url_for('static', filename='img/site/6.jpg') }}" alt="Аист" class="h-28 w-auto object-contain opacity-80">
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- Статистика -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+            <div class="bg-white rounded-xl p-4 text-center border border-gray-100 shadow-sm hover:shadow-md transition">
+                <p class="text-xs font-bold uppercase text-gray-400">Объектов</p>
+                <p class="text-3xl font-bold text-red-600 mt-1">{{ results|length }}</p>
+            </div>
+            <div class="bg-white rounded-xl p-4 text-center border border-gray-100 shadow-sm hover:shadow-md transition">
+                <p class="text-xs font-bold uppercase text-gray-400">Категорий</p>
+                <p class="text-3xl font-bold text-red-600 mt-1">{{ categories|length }}</p>
+            </div>
+            <div class="bg-white rounded-xl p-4 text-center border border-gray-100 shadow-sm hover:shadow-md transition">
+                <p class="text-xs font-bold uppercase text-gray-400">Регионов</p>
+                <p class="text-3xl font-bold text-red-600 mt-1">{{ regions|length }}</p>
+            </div>
+            <div class="bg-white rounded-xl p-4 text-center border border-gray-100 shadow-sm hover:shadow-md transition">
+                <p class="text-xs font-bold uppercase text-gray-400">Периодов</p>
+                <p class="text-3xl font-bold text-red-600 mt-1">{{ periods|length }}</p>
+            </div>
+        </div>
+
+        <!-- Форма поиска -->
+        <div class="mb-10 rounded-xl bg-white p-6 border border-gray-100 shadow-sm">
+            <form action="{{ url_for('treasures') }}" method="GET" class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-6">
+                <div class="lg:col-span-2">
+                    <label class="mb-1.5 block text-xs font-semibold uppercase text-gray-500">Название</label>
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                        <input type="text" name="keyword" value="{{ keyword }}" placeholder="Поиск..." class="w-full rounded-lg border border-gray-200 bg-gray-50 py-2.5 pl-9 pr-3 text-sm outline-none focus:border-red-400 focus:bg-white transition">
+                    </div>
+                </div>
+                <div>
+                    <label class="mb-1.5 block text-xs font-semibold uppercase text-gray-500">Категория</label>
+                    <select name="category_id" class="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-red-400 transition">
+                        <option value="">Все</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.id }}" {% if selected_category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="mb-1.5 block text-xs font-semibold uppercase text-gray-500">Регион</label>
+                    <select name="region_id" class="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-red-400 transition">
+                        <option value="">Все</option>
+                        {% for reg in regions %}
+                            <option value="{{ reg.id }}" {% if selected_region_id == reg.id %}selected{% endif %}>{{ reg.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="mb-1.5 block text-xs font-semibold uppercase text-gray-500">Период</label>
+                    <select name="period" class="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-red-400 transition">
+                        <option value="">Все</option>
+                        {% for period in periods %}
+                            <option value="{{ period }}" {% if selected_period == period %}selected{% endif %}>{{ period }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="flex items-end gap-2">
+                    <button type="submit" class="w-full rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700 transition shadow-sm">
+                        Найти
+                    </button>
+                    <a href="{{ url_for('treasures') }}" class="inline-flex items-center justify-center rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-600 hover:border-red-400 hover:text-red-500 transition">
+                        Сброс
+                    </a>
+                </div>
+            </form>
+
+            {% if keyword or selected_period %}
+                <div class="mt-4 pt-3 border-t border-gray-100">
+                    <p class="text-xs text-gray-500">
+                        {% if keyword %}По запросу: <span class="font-semibold text-red-600">"{{ keyword }}"</span>{% endif %}
+                        {% if keyword and selected_period %} · {% endif %}
+                        {% if selected_period %}Период: <span class="font-semibold text-red-600">{{ selected_period }}</span>{% endif %}
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Декоративный разделитель -->
+        <div class="flex items-center justify-center gap-4 mb-6">
+            <div class="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                <div class="w-2 h-2 rounded-full bg-red-400"></div>
+                <div class="w-2 h-2 rounded-full bg-red-300"></div>
+            </div>
+            <div class="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+        </div>
+
+        <!-- Результаты поиска -->
+        {% if results %}
+            <div class="mb-4">
+                <p class="text-sm text-gray-500">Найдено: <span class="font-bold text-red-600">{{ results|length }}</span> уникальных экспонатов</p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {% for object in results %}
+                <div class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 flex flex-col">
+                    <div class="relative h-48 overflow-hidden bg-gray-100">
+                        <img src="{{ url_for('static', filename='img/' + object.image_url) }}" alt="{{ object.name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        <div class="absolute top-2 left-2">
+                            <span class="text-[9px] font-bold uppercase tracking-wider bg-white/90 backdrop-blur px-2 py-1 rounded text-red-600 shadow-sm">{{ object.category.name }}</span>
+                        </div>
+                    </div>
+                    <div class="p-5 flex-grow flex flex-col">
+                        <div class="flex items-start justify-between">
+                            <h3 class="text-lg font-bold text-gray-800 mb-1 line-clamp-1">{{ object.name }}</h3>
+                            <i class="fas fa-gem text-amber-400 text-sm flex-shrink-0 ml-2"></i>
+                        </div>
+                        <div class="flex flex-wrap gap-2 text-xs text-gray-500 mb-3">
+                            <span><i class="fas fa-map-marker-alt text-red-400 mr-1"></i>{{ object.region.name }}</span>
+                            <span><i class="far fa-calendar-alt text-amber-500 mr-1"></i>{{ object.period }}</span>
+                        </div>
+                        <p class="text-gray-500 text-sm leading-relaxed line-clamp-2 flex-grow">
+                            {{ object.description|truncate(100) }}
+                        </p>
+                        <div class="mt-4 pt-3 border-t border-gray-100">
+                            <a href="{{ url_for('object_detail', id=object.id) }}" class="inline-flex items-center gap-1 text-red-600 text-sm font-medium hover:gap-2 transition-all">
+                                Изучить артефакт <i class="fas fa-arrow-right text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bg-white rounded-xl p-12 text-center border border-gray-100 shadow-sm">
+                <i class="fas fa-search text-5xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-700 mb-2">Ничего не найдено</h3>
+                <p class="text-gray-400 text-sm">Попробуйте изменить параметры поиска или выбрать другую категорию</p>
+                <a href="{{ url_for('treasures') }}" class="inline-block mt-5 px-5 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition">
+                    Весь каталог
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+    .line-clamp-1 {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}

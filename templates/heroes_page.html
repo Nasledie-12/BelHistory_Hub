@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="py-12 bg-gradient-to-br from-gray-50 to-white min-h-screen">
+    <div class="container mx-auto px-4 max-w-7xl">
+
+        <!-- ВЕРХНИЙ БАННЕР -->
+        <div class="relative mb-10 overflow-hidden rounded-2xl bg-white border border-gray-200 shadow-md">
+            <div class="absolute inset-0 opacity-5">
+                <img src="{{ url_for('static', filename='img/site/6.jpg') }}" alt="Аист" class="w-full h-full object-cover">
+            </div>
+            <div class="relative z-10 p-8 md:p-10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="inline-flex items-center gap-2 bg-red-50 rounded-full px-3 py-1 mb-4">
+                            <i class="fas fa-user-tie text-red-500 text-xs"></i>
+                            <span class="text-red-600 text-xs font-bold uppercase tracking-wider">Биографии и историческая память</span>
+                        </div>
+                        <h1 class="text-3xl md:text-5xl font-bold">
+                            <span class="bg-gradient-to-r from-red-600 to-green-600 bg-clip-text text-transparent">Национальные герои</span>
+                        </h1>
+                        <div class="w-20 h-1 bg-gradient-to-r from-red-500 to-green-500 mt-4 mb-5 rounded-full"></div>
+                        <p class="text-gray-500 max-w-2xl leading-relaxed text-lg">
+                            Выдающиеся личности, которые повлияли на культуру, просвещение и историческую память Беларуси.
+                        </p>
+                    </div>
+                    <div class="hidden lg:block">
+                        <img src="{{ url_for('static', filename='img/site/6.jpg') }}" alt="Аист" class="h-28 w-auto object-contain opacity-80">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- СТАТИСТИКА -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-5 mb-10">
+            <div class="group bg-white rounded-xl p-4 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+                <div class="text-3xl font-black text-red-600 mb-1 group-hover:scale-110 transition inline-block">{{ heroes|length }}</div>
+                <p class="text-xs font-bold uppercase text-gray-400 tracking-wider">Всего героев</p>
+            </div>
+            <div class="group bg-white rounded-xl p-4 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+                <div class="text-3xl font-black text-amber-600 mb-1 group-hover:scale-110 transition inline-block">10+</div>
+                <p class="text-xs font-bold uppercase text-gray-400 tracking-wider">Эпох и веков</p>
+            </div>
+            <div class="group bg-white rounded-xl p-4 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+                <div class="text-3xl font-black text-green-600 mb-1 group-hover:scale-110 transition inline-block">IX-XXI</div>
+                <p class="text-xs font-bold uppercase text-gray-400 tracking-wider">века истории</p>
+            </div>
+        </div>
+
+        <!-- ПОИСК -->
+        <div class="mb-8 rounded-xl bg-white p-5 shadow-sm border border-gray-100">
+            <form action="{{ url_for('heroes_page') }}" method="GET" class="flex flex-col md:flex-row gap-3">
+                <div class="flex-1 relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" name="keyword" value="{{ keyword }}" placeholder="Поиск по героям..." class="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 pl-11 pr-4 text-sm outline-none focus:border-red-400 focus:bg-white transition">
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-semibold rounded-xl hover:from-red-600 hover:to-red-700 transition shadow-md">
+                        <i class="fas fa-search mr-1"></i> Найти
+                    </button>
+                    <a href="{{ url_for('heroes_page') }}" class="px-5 py-3 border border-gray-300 text-gray-600 text-sm font-medium rounded-xl hover:border-red-400 hover:text-red-500 transition">
+                        Сбросить
+                    </a>
+                </div>
+            </form>
+            {% if keyword %}
+            <div class="mt-3 pt-2 border-t border-gray-100">
+                <p class="text-xs text-gray-500">Результаты поиска: <span class="font-semibold text-red-600">"{{ keyword }}"</span></p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- КРАСИВЫЕ КАРТОЧКИ ГЕРОЕВ С ВЕКАМИ -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for hero in heroes %}
+            <div class="group relative">
+                <!-- Эффект свечения -->
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-red-500 via-amber-500 to-green-500 rounded-2xl blur opacity-0 group-hover:opacity-60 transition duration-500"></div>
+
+                <div class="relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 h-full flex flex-col">
+                    <!-- Фото -->
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="{{ url_for('static', filename='img/' + hero.image_url) }}" alt="{{ hero.name }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+
+                        <!-- Золотая рамка при наведении -->
+                        <div class="absolute inset-2 border-2 border-white/30 rounded-xl opacity-0 group-hover:opacity-100 transition duration-500"></div>
+
+                        <!-- Бейдж века/года -->
+                        <div class="absolute top-3 left-3">
+                            <div class="bg-black/60 backdrop-blur rounded-full px-2 py-0.5">
+                                {% if hero.name == 'Рогволод' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 X век</span>
+                                {% elif hero.name == 'Всеслав Чародей' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 XI век</span>
+                                {% elif hero.name == 'Кирилл Туровский' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 XII век</span>
+                                {% elif hero.name == 'Евфросиния Полоцкая' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 XII век</span>
+                                {% elif hero.name == 'Франциск Скорина' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1470-1551</span>
+                                {% elif hero.name == 'Николай Гусовский' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1470-1533</span>
+                                {% elif hero.name == 'Симон Будный' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1530-1593</span>
+                                {% elif hero.name == 'Василий Тяпинский' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1540-1603</span>
+                                {% elif hero.name == 'Лев Сапега' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1557-1633</span>
+                                {% elif hero.name == 'Симеон Полоцкий' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1629-1680</span>
+                                {% elif hero.name == 'Михаил Огинский' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1765-1833</span>
+                                {% elif hero.name == 'Тадеуш Костюшко' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1746-1817</span>
+                                {% elif hero.name == 'Наполеон Орда' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1807-1883</span>
+                                {% elif hero.name == 'Игнат Домейко' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1802-1889</span>
+                                {% elif hero.name == 'Кастусь Калиновский' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1838-1864</span>
+                                {% elif hero.name == 'Янка Купала' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1882-1942</span>
+                                {% elif hero.name == 'Якуб Колас' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1882-1956</span>
+                                {% elif hero.name == 'Максим Богданович' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1891-1917</span>
+                                {% elif hero.name == 'Владимир Карват' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1958-1996</span>
+                                {% elif hero.name == 'Михаил Савицкий' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1922-2010</span>
+                                {% elif hero.name == 'Павел Мариев' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1935-2019</span>
+                                {% elif hero.name == 'Алесь Адамович' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1927-1994</span>
+                                {% elif hero.name == 'Василь Быков' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1924-2003</span>
+                                {% elif hero.name == 'Петр Машеров' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 1918-1980</span>
+                                {% elif hero.name == 'Марина Василевская' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 р. 1990</span>
+                                {% elif hero.name == 'Алексей Талай' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 р. 1985</span>
+                                {% elif hero.name == 'Александр Лукашенко' %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 р. 1954</span>
+                                {% else %}
+                                <span class="text-[9px] font-bold text-amber-400">📅 разные века</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Бейдж профессии -->
+                        <div class="absolute bottom-3 left-3">
+                            <span class="text-[8px] font-bold uppercase bg-gradient-to-r from-red-500 to-amber-500 text-white px-2 py-0.5 rounded-full shadow-md">{{ hero.short_info }}</span>
+                        </div>
+
+                        <!-- Иконка в углу -->
+                        <div class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/20 backdrop-blur flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
+                            <i class="fas fa-crown text-amber-400 text-xs"></i>
+                        </div>
+                    </div>
+
+                    <!-- Информация -->
+                    <div class="p-5 flex-1 flex flex-col">
+                        <h3 class="text-xl font-bold text-gray-800 group-hover:text-red-600 transition mb-1">{{ hero.name }}</h3>
+                        <div class="w-12 h-0.5 bg-gradient-to-r from-red-500 to-amber-500 mb-3 rounded-full group-hover:w-20 transition-all duration-500"></div>
+                        <p class="text-gray-600 text-sm leading-relaxed flex-1">{{ hero.description }}</p>
+
+                        <!-- Декоративная линия внизу -->
+                        <div class="mt-4 pt-2 flex justify-center gap-1">
+                            <div class="w-1 h-1 rounded-full bg-red-300"></div>
+                            <div class="w-1 h-1 rounded-full bg-amber-300"></div>
+                            <div class="w-1 h-1 rounded-full bg-green-300"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if not heroes %}
+        <div class="bg-white rounded-xl p-12 text-center border border-gray-100 shadow-sm">
+            <div class="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                <i class="fas fa-user text-2xl text-gray-400"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-700 mb-2">Герои не найдены</h3>
+            <p class="text-gray-400 text-sm">Попробуйте изменить поисковый запрос</p>
+            <a href="{{ url_for('heroes_page') }}" class="inline-block mt-4 px-5 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm rounded-lg hover:shadow-md transition">
+                Сбросить
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Декоративная линия внизу -->
+        <div class="flex justify-center items-center gap-2 mt-12">
+            <div class="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+            <div class="flex gap-1">
+                <div class="w-1.5 h-1.5 rounded-full bg-red-400"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-red-400"></div>
+            </div>
+            <div class="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .h-full {
+        height: 100%;
+    }
+</style>
+{% endblock %}

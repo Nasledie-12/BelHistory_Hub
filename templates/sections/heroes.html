@@ -1,0 +1,38 @@
+<section id="heroes" class="py-24 bg-slate-50">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-extrabold text-slate-900 mb-4">Национальные герои</h2>
+            <p class="text-slate-500 max-w-2xl mx-auto">
+                Выдающиеся личности, чьи деяния и творчество навсегда вписаны в историю и культуру Беларуси.
+            </p>
+            <a href="{{ url_for('heroes_page') }}" class="mt-6 inline-flex items-center text-sm font-bold text-red-500 transition hover:text-red-600">
+                Открыть отдельную страницу героев <i class="fas fa-chevron-right ml-2 text-[10px]"></i>
+            </a>
+        </div>
+        <div class="relative overflow-hidden px-12">
+            <div class="heroes-slider flex space-x-8 overflow-x-auto pb-8 scrollbar-hide snap-x">
+                {% for hero in heroes %}
+                <div class="min-w-[300px] bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition group snap-center border border-gray-100">
+                    <div class="relative h-96">
+                        <img src="{{ url_for('static', filename='img/' + hero.image_url) }}" alt="{{ hero.name }} - национальный герой Беларуси" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 p-8 text-white">
+                            <h3 class="text-2xl font-bold mb-2">{{ hero.name }}</h3>
+                            <p class="text-slate-300 text-sm">{{ hero.short_info }}</p>
+                        </div>
+                        <button type="button" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-red-500 transition">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="heroes-slider-prev absolute left-0 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-slate-400 hover:text-red-500 transition">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button type="button" class="heroes-slider-next absolute right-0 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-slate-400 hover:text-red-500 transition">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</section>

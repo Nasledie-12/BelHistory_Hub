@@ -1,0 +1,33 @@
+<section class="py-24 bg-white">
+    <div class="container mx-auto px-4 max-w-6xl">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-extrabold text-slate-900 mb-4">Проверьте свои знания</h2>
+            <p class="text-slate-500">Ответьте на несколько вопросов, чтобы закрепить знания об истории и культуре Беларуси.</p>
+            <a href="{{ url_for('quizzes_page') }}" class="mt-6 inline-flex items-center text-sm font-bold text-red-500 transition hover:text-red-600">
+                Открыть все тесты и викторины <i class="fas fa-chevron-right ml-2 text-[10px]"></i>
+            </a>
+            <div class="w-24 h-1 bg-red-500 mx-auto mt-4"></div>
+        </div>
+        <div class="grid gap-6 lg:grid-cols-2">
+            {% for quiz in quizzes %}
+                <article class="overflow-hidden rounded-[2rem] border border-gray-100 bg-slate-50 p-8 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-red-50 text-sm font-extrabold text-red-500">
+                            {{ loop.index }}
+                        </span>
+                        <span class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Мини-викторина</span>
+                    </div>
+                    <h3 class="mt-5 text-2xl font-extrabold text-slate-900">{{ quiz.question }}</h3>
+                    <div class="mt-6 grid gap-3">
+                        {% for option in quiz.display_options %}
+                            <button type="button" data-quiz-id="{{ quiz.id }}" data-quiz-answer="{{ option }}" class="quiz-answer-button rounded-2xl border border-transparent bg-white p-4 text-left text-sm font-semibold text-slate-700 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600">
+                                {{ option }}
+                            </button>
+                        {% endfor %}
+                    </div>
+                    <div id="result-quiz-{{ quiz.id }}" class="mt-4 hidden rounded-2xl px-4 py-3 text-sm font-bold"></div>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>

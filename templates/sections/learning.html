@@ -1,0 +1,42 @@
+<section id="learning" class="py-24 bg-slate-900 text-white">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-extrabold mb-4">Интерактивное обучение</h2>
+            <p class="text-slate-400 max-w-2xl mx-auto">
+                Изучайте историю через викторины, подборки материалов и удобные цифровые инструменты платформы.
+            </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-slate-800/50 p-10 rounded-3xl border border-slate-700 hover:border-red-500 transition group">
+                <div class="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center text-red-500 text-3xl mb-8 group-hover:bg-red-500 group-hover:text-white transition duration-500">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Исторические викторины</h3>
+                <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                    Проверьте свои знания о событиях и национальных героях в увлекательной игровой форме.
+                </p>
+                <a href="{{ url_for('quizzes_page') }}" class="inline-flex items-center text-sm font-bold text-red-400 transition hover:text-red-300">
+                    Открыть страницу викторин <i class="fas fa-chevron-right ml-2 text-[10px]"></i>
+                </a>
+            </div>
+            <div class="bg-slate-800/50 p-10 rounded-3xl border border-slate-700 hover:border-red-500 transition group">
+                <div class="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center text-red-500 text-3xl mb-8 group-hover:bg-red-500 group-hover:text-white transition duration-500">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Отслеживание прогресса</h3>
+                <p class="text-slate-400 text-sm leading-relaxed mb-8">
+                    Сохраняйте материалы, формируйте коллекции и следите за своими успехами в изучении.
+                </p>
+                <div class="mt-auto">
+                    <div class="flex justify-between text-xs font-bold mb-2">
+                        <span>Общий прогресс</span>
+                        <span class="text-red-500">65%</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                        <div class="h-full bg-red-500" style="width: 65%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,77 @@
+<footer class="border-t-2 border-red-500 bg-gray-900 py-12">
+    <div class="container mx-auto px-4 max-w-6xl">
+
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 pb-8">
+
+            <!-- Блок 1: Логотип -->
+            <div>
+                <div class="flex items-center gap-3 mb-4">
+                    <img src="{{ asset_url('img/site/герб.png') }}" alt="Герб Беларуси" class="h-12 w-auto object-contain">
+                    <div>
+                        <h3 class="text-xl font-bold bg-gradient-to-r from-red-500 to-green-500 bg-clip-text text-transparent">NASLEDIE</h3>
+                        <p class="text-xs text-gray-400">Платформа культурного наследия</p>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                    Интерактивная платформа для изучения культурно-исторического наследия Республики Беларусь.
+                </p>
+            </div>
+
+            <!-- Блок 2: Навигация -->
+            <div>
+                <h4 class="text-sm font-bold uppercase text-red-500 tracking-wider mb-4">Навигация</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="{{ url_for('index') }}" class="text-gray-300 hover:text-red-400 transition">Главная</a></li>
+                    <li><a href="{{ url_for('treasures') }}" class="text-gray-300 hover:text-red-400 transition">Сокровища</a></li>
+                    <li><a href="{{ url_for('places_page') }}" class="text-gray-300 hover:text-red-400 transition">Места Беларуси</a></li>
+                    <li><a href="{{ url_for('heroes_page') }}" class="text-gray-300 hover:text-red-400 transition">Национальные герои</a></li>
+                    <li><a href="{{ url_for('help_page') }}" class="text-gray-300 hover:text-red-400 transition">Справка</a></li>
+                </ul>
+            </div>
+
+            <!-- Блок 3: Разделы -->
+            <div>
+                <h4 class="text-sm font-bold uppercase text-red-500 tracking-wider mb-4">Разделы</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="{{ url_for('historical_events_page') }}" class="text-gray-300 hover:text-red-400 transition">Исторические события</a></li>
+                    <li><a href="{{ url_for('national_holidays_page') }}" class="text-gray-300 hover:text-red-400 transition">Национальные праздники</a></li>
+                    <li><a href="{{ url_for('quizzes_page') }}" class="text-gray-300 hover:text-red-400 transition">Тесты и викторины</a></li>
+                    <li><a href="{{ url_for('login') }}" class="text-gray-300 hover:text-red-400 transition">Авторизация</a></li>
+                    {% if current_user.is_authenticated and current_user.is_staff() %}
+                        <li><a href="{{ url_for('admin.index') }}" class="text-gray-300 hover:text-red-400 transition">Панель управления</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <!-- Блок 4: Контакты -->
+            <div>
+                <h4 class="text-sm font-bold uppercase text-red-500 tracking-wider mb-4">Контакты</h4>
+                <ul class="space-y-2 text-sm text-gray-300">
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-envelope text-red-400 w-4"></i>
+                        info@nasledie.by
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-phone text-red-400 w-4"></i>
+                        +375 (25) 958-83-13
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-map-marker-alt text-red-400 w-4"></i>
+                        г. Гродно, ул.Горького, 86
+                    </li>
+                </ul>
+                <div class="flex gap-3 mt-4 pt-4 border-t border-gray-700">
+                    <a href="#" class="text-gray-400 hover:text-red-400 transition"><i class="fab fa-telegram-plane"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-red-400 transition"><i class="fab fa-vk"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-red-400 transition"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Нижняя полоса -->
+        <div class="pt-6 mt-4 border-t border-gray-700 text-center text-xs text-gray-500">
+            © 2026 NASLEDIE. Все права защищены.
+        </div>
+
+    </div>
+</footer>

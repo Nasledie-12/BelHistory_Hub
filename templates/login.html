@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="py-24 bg-slate-50 min-h-screen flex items-center justify-center">
+    <div class="container mx-auto px-4 flex justify-center">
+        <div class="bg-white p-12 rounded-3xl shadow-xl w-full max-w-md border border-gray-100">
+            <div class="text-center mb-10">
+                {% if mode == 'register' %}
+                    <h2 class="text-3xl font-extrabold text-slate-900 mb-2">Создайте аккаунт</h2>
+                    <p class="text-slate-400 text-sm">Новый пользователь получает роль «Пользователь»</p>
+                {% else %}
+                    <h2 class="text-3xl font-extrabold text-slate-900 mb-2">С возвращением</h2>
+                    <p class="text-slate-400 text-sm">Войдите, чтобы продолжить изучение</p>
+                {% endif %}
+            </div>
+            <form method="POST" class="space-y-6">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2">
+                        {% if mode == 'register' %}Логин{% else %}Логин или Email{% endif %}
+                    </label>
+                    <div class="relative">
+                        <i class="far fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i>
+                        <input type="text" name="username" placeholder="{% if mode == 'register' %}your_name{% else %}admin{% endif %}" class="w-full pl-10 pr-4 py-4 bg-slate-50 border border-transparent rounded-2xl text-sm focus:bg-white focus:border-red-400 transition outline-none" required>
+                    </div>
+                </div>
+                {% if mode == 'register' %}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Email</label>
+                        <div class="relative">
+                            <i class="far fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i>
+                            <input type="email" name="email" placeholder="name@example.com" class="w-full pl-10 pr-4 py-4 bg-slate-50 border border-transparent rounded-2xl text-sm focus:bg-white focus:border-red-400 transition outline-none" required>
+                        </div>
+                    </div>
+                {% endif %}
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Пароль</label>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i>
+                        <input type="password" name="password" placeholder="••••••••" class="w-full pl-10 pr-4 py-4 bg-slate-50 border border-transparent rounded-2xl text-sm focus:bg-white focus:border-red-400 transition outline-none" required>
+                    </div>
+                </div>
+                {% if mode == 'register' %}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Повторите пароль</label>
+                        <div class="relative">
+                            <i class="fas fa-shield-alt absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i>
+                            <input type="password" name="password_repeat" placeholder="••••••••" class="w-full pl-10 pr-4 py-4 bg-slate-50 border border-transparent rounded-2xl text-sm focus:bg-white focus:border-red-400 transition outline-none" required>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="flex items-center">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="remember" class="w-4 h-4 rounded text-red-500 focus:ring-red-400 border-gray-300">
+                            <span class="ml-2 text-xs text-slate-500 font-medium">Запомнить меня</span>
+                        </label>
+                    </div>
+                {% endif %}
+                <button type="submit" class="w-full accent-red text-white py-4 rounded-2xl font-bold accent-red-hover transition shadow-lg mt-4">
+                    {% if mode == 'register' %}Создать аккаунт{% else %}Войти в систему{% endif %}
+                </button>
+            </form>
+            <div class="mt-8 pt-8 border-t border-gray-100 text-center">
+                <p class="text-sm text-slate-400">
+                    {% if mode == 'register' %}
+                        Уже есть аккаунт? <a href="{{ url_for('login') }}" class="text-red-500 font-bold hover:text-red-600">Войти</a>
+                    {% else %}
+                        Нет аккаунта? <a href="{{ url_for('register') }}" class="text-red-500 font-bold hover:text-red-600">Создать сейчас</a>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

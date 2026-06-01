@@ -1,0 +1,352 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="py-12 bg-gradient-to-br from-gray-50 to-white min-h-screen">
+    <div class="container mx-auto px-4 max-w-7xl">
+
+        <!-- ВЕРХНИЙ БАННЕР -->
+        <div class="relative mb-8 overflow-hidden rounded-2xl bg-white border border-gray-200 shadow-md">
+            <div class="absolute inset-0 opacity-5">
+                <img src="{{ url_for('static', filename='img/site/6.jpg') }}" alt="Аист" class="w-full h-full object-cover">
+            </div>
+            <div class="relative z-10 p-6 md:p-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="inline-flex items-center gap-2 bg-red-50 rounded-full px-3 py-1 mb-3">
+                            <i class="fas fa-user-circle text-red-500 text-xs"></i>
+                            <span class="text-red-600 text-[10px] font-bold uppercase tracking-wider">Личный кабинет</span>
+                        </div>
+                        <h1 class="text-2xl md:text-4xl font-bold">
+                            <span class="bg-gradient-to-r from-red-600 to-green-600 bg-clip-text text-transparent">Мой профиль</span>
+                        </h1>
+                        <div class="w-16 h-0.5 bg-gradient-to-r from-red-500 to-green-500 mt-2 mb-3 rounded-full"></div>
+                        <p class="text-gray-500 text-sm max-w-xl leading-relaxed">
+                            Управляйте профилем, отслеживайте прогресс и изучайте историю вместе с нами.
+                        </p>
+                    </div>
+                    <div class="hidden md:block">
+                        <img src="{{ url_for('static', filename='img/site/6.jpg') }}" alt="Аист" class="h-20 w-auto object-contain opacity-80">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid gap-6 lg:gap-8 lg:grid-cols-3">
+
+            <!-- ЛЕВАЯ КОЛОНКА - ПРОФИЛЬ -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100">
+                    <!-- Обложка -->
+                    <div class="h-20 bg-gradient-to-r from-gray-100 to-gray-200"></div>
+
+                    <!-- Аватар -->
+                    <div class="relative px-6 text-center">
+                        <div class="absolute -top-10 left-1/2 -translate-x-1/2">
+                            <div class="relative">
+                                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-red-500 to-amber-500 flex items-center justify-center text-white text-2xl font-bold shadow-lg ring-4 ring-white">
+                                    {{ current_user.username[0]|upper }}
+                                </div>
+                                <div class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 ring-2 ring-white"></div>
+                            </div>
+                        </div>
+                        <div class="pt-12 pb-4">
+                            <h2 class="text-xl font-bold text-gray-800">{{ current_user.username }}</h2>
+                            <p class="text-gray-500 text-sm mt-0.5">{{ current_user.email }}</p>
+                            <div class="inline-flex items-center gap-1 mt-2 px-3 py-1 bg-gray-100 rounded-full">
+                                <i class="fas fa-shield-alt text-amber-500 text-[10px]"></i>
+                                <span class="text-[10px] font-medium text-gray-600">{{ current_user.role_label }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Прогресс -->
+                    <div class="px-5 pb-4">
+                        <div class="bg-gray-50 rounded-xl p-3">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[10px] font-bold uppercase text-gray-500">Общий прогресс</span>
+                                <span class="text-xs font-bold text-red-600">{{ progress_percent }}%</span>
+                            </div>
+                            <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-red-500 to-amber-500 rounded-full" style="width: {{ progress_percent }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Статистика -->
+                    <div class="px-5 pb-4 space-y-1">
+                        <div class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-lg bg-red-100 flex items-center justify-center">
+                                    <i class="fas fa-scroll text-red-500 text-[10px]"></i>
+                                </div>
+                                <span class="text-xs text-gray-600">Всего вопросов</span>
+                            </div>
+                            <span class="text-xs font-bold text-gray-800">{{ learning_stats.overall.total_questions }}</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center">
+                                    <i class="fas fa-check-circle text-amber-500 text-[10px]"></i>
+                                </div>
+                                <span class="text-xs text-gray-600">Правильных ответов</span>
+                            </div>
+                            <span class="text-xs font-bold text-gray-800">{{ learning_stats.overall.completed_count }}</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-lg bg-green-100 flex items-center justify-center">
+                                    <i class="fas fa-heart text-green-500 text-[10px]"></i>
+                                </div>
+                                <span class="text-xs text-gray-600">В коллекции</span>
+                            </div>
+                            <span class="text-xs font-bold text-gray-800">{{ collection|length }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Кнопка настроек -->
+                    <div class="px-5 pb-5">
+                        <button onclick="openSettingsModal()"
+                                class="w-full flex items-center justify-center gap-2 rounded-xl border border-gray-200 text-gray-700 text-xs font-semibold py-2.5 hover:border-red-400 hover:text-red-500 transition">
+                            <i class="fas fa-sliders-h text-[10px]"></i>
+                            Настройки профиля
+                        </button>
+                        {% if current_user.is_staff() %}
+                        <a href="{{ url_for('admin.index') }}" class="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-semibold py-2.5 mt-2 hover:shadow-md transition">
+                            <i class="fas fa-shield-alt text-[10px]"></i>
+                            Панель управления
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- ПРАВАЯ КОЛОНКА -->
+            <div class="lg:col-span-2 space-y-6">
+
+                <!-- СТАТИСТИКА - 3 ровные карточки -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
+                                <i class="fas fa-chart-line text-red-500 text-xs"></i>
+                            </div>
+                            <span class="text-[10px] font-bold uppercase text-gray-400">Общий прогресс</span>
+                        </div>
+                        <div class="text-xl font-bold text-gray-800">{{ learning_stats.overall.completed_count }}/{{ learning_stats.overall.total_questions }}</div>
+                        <div class="text-xs text-gray-500 mt-1">{{ learning_stats.overall.progress_percent }}% завершено</div>
+                        <div class="mt-2 h-1 bg-gray-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-red-500 rounded-full" style="width: {{ learning_stats.overall.progress_percent }}%"></div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
+                                <i class="fas fa-scroll text-amber-500 text-xs"></i>
+                            </div>
+                            <span class="text-[10px] font-bold uppercase text-gray-400">Викторина</span>
+                        </div>
+                        <div class="text-xl font-bold text-gray-800">{{ learning_stats.quiz.completed_count }}/{{ learning_stats.quiz.total_questions }}</div>
+                        <div class="text-xs text-gray-500 mt-1">{{ learning_stats.quiz.progress_percent }}% пройдено</div>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+                                <i class="fas fa-list-check text-green-500 text-xs"></i>
+                            </div>
+                            <span class="text-[10px] font-bold uppercase text-gray-400">Тесты</span>
+                        </div>
+                        <div class="text-xl font-bold text-gray-800">{{ learning_stats.test.completed_count }}/{{ learning_stats.test.total_questions }}</div>
+                        <div class="text-xs text-gray-500 mt-1">{{ learning_stats.test.progress_percent }}% пройдено</div>
+                    </div>
+                </div>
+
+                <!-- АДМИН-БЛОК -->
+                {% if current_user.is_admin() %}
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl shadow-md border border-purple-100 overflow-hidden">
+                    <div class="px-5 py-3 border-b border-purple-100">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-purple-500 flex items-center justify-center">
+                                <i class="fas fa-crown text-white text-xs"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800">Администрирование</h3>
+                                <p class="text-[10px] text-gray-500">Управление платформой</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div class="bg-white rounded-xl p-3 text-center shadow-sm">
+                                <div class="text-2xl font-bold text-purple-600">{{ users_count }}</div>
+                                <div class="text-[10px] text-gray-500 mt-1">пользователей</div>
+                            </div>
+                            <div class="bg-white rounded-xl p-3 text-center shadow-sm">
+                                <div class="text-2xl font-bold text-red-600">{{ collection|length }}</div>
+                                <div class="text-[10px] text-gray-500 mt-1">в коллекциях</div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <a href="{{ url_for('admin.index') }}" class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-semibold rounded-lg hover:shadow-md transition">Панель управления</a>
+                            <a href="{{ url_for('user.index_view') }}" class="flex-1 text-center px-3 py-2 border border-purple-300 text-purple-700 text-xs font-semibold rounded-lg hover:bg-purple-500 hover:text-white transition">Пользователи</a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- КОЛЛЕКЦИЯ - РОВНЫЕ КАРТОЧКИ ОДИНАКОВОЙ ВЫСОТЫ -->
+                <div class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="px-5 py-3 bg-gray-50 border-b border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-lg bg-red-100 flex items-center justify-center">
+                                    <i class="fas fa-heart text-red-500 text-xs"></i>
+                                </div>
+                                <h3 class="font-bold text-gray-800">Моя коллекция</h3>
+                            </div>
+                            <span class="text-xs font-semibold text-red-600 bg-red-50 px-2 py-0.5 rounded-full">{{ collection|length }}</span>
+                        </div>
+                    </div>
+
+                    <div class="p-5">
+                        {% if collection %}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {% for item in collection %}
+                                    {% if item.object %}
+                                    <div class="bg-gray-50 rounded-xl p-3 hover:shadow-md transition h-full">
+                                        <div class="flex gap-3">
+                                            <div class="w-16 h-16 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
+                                                <img src="{{ url_for('static', filename='img/' + item.object.image_url) }}" alt="{{ item.object.name }}" class="w-full h-full object-cover">
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex flex-wrap gap-1 mb-1">
+                                                    <span class="text-[8px] font-bold uppercase bg-red-50 text-red-500 px-1.5 py-0.5 rounded-full">{{ item.object.category.name }}</span>
+                                                    <span class="text-[8px] font-bold uppercase bg-gray-200 text-gray-500 px-1.5 py-0.5 rounded-full">{{ item.object.region.name }}</span>
+                                                </div>
+                                                <h4 class="font-bold text-gray-800 text-xs truncate">{{ item.object.name }}</h4>
+                                                <p class="text-[10px] text-gray-400 mt-1">Добавлено {{ item.added_at.strftime('%d.%m.%Y') if item.added_at else 'недавно' }}</p>
+                                                <div class="flex items-center gap-3 mt-2">
+                                                    <a href="{{ url_for('object_detail', id=item.object.id) }}" class="text-red-500 text-[10px] font-medium hover:text-red-600 transition">Открыть</a>
+                                                    <form action="{{ url_for('remove_from_collection', id=item.object.id) }}" method="POST" class="inline">
+                                                        <button type="submit" class="text-gray-400 text-[10px] hover:text-red-500 transition">Удалить</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-10">
+                                <div class="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                                    <i class="fas fa-heart text-2xl text-gray-300"></i>
+                                </div>
+                                <p class="text-gray-500 text-sm">У вас пока нет сохраненных объектов</p>
+                                <a href="{{ url_for('treasures') }}" class="inline-block mt-3 px-4 py-2 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition">Перейти к сокровищам</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- МОДАЛЬНОЕ ОКНО НАСТРОЕК -->
+        <div id="settingsModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center" onclick="closeSettingsModal(event)">
+            <div class="bg-white rounded-2xl max-w-lg w-full mx-4 shadow-2xl transform transition-all duration-300 scale-95 opacity-0" id="settingsModalContent" onclick="event.stopPropagation()">
+                <div class="border-b border-gray-100 p-4 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                            <i class="fas fa-sliders-h text-red-500 text-sm"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800">Настройки профиля</h3>
+                    </div>
+                    <button onclick="closeSettingsModal()" class="w-7 h-7 rounded-full bg-gray-100 hover:bg-red-500 hover:text-white transition flex items-center justify-center">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                </div>
+
+                <form action="{{ url_for('edit_profile') }}" method="POST" class="p-5 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Логин</label>
+                            <input type="text" name="username" value="{{ current_user.username }}" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-red-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Email</label>
+                            <input type="email" name="email" value="{{ current_user.email }}" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-red-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-100 pt-3">
+                        <p class="text-xs font-medium text-gray-700 mb-2">Смена пароля</p>
+                        <div class="space-y-2">
+                            <input type="password" name="current_password" placeholder="Текущий пароль" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-red-500 outline-none">
+                            <input type="password" name="new_password" placeholder="Новый пароль" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-red-500 outline-none">
+                            <input type="password" name="password_repeat" placeholder="Подтверждение пароля" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-red-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 pt-2">
+                        <button type="submit" class="flex-1 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition">Сохранить</button>
+                        <button type="button" onclick="closeSettingsModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition">Отмена</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Декоративная линия -->
+        <div class="flex justify-center items-center gap-2 mt-10">
+            <div class="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+            <div class="flex gap-1">
+                <div class="w-1.5 h-1.5 rounded-full bg-red-400"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+            </div>
+            <div class="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function openSettingsModal() {
+        const modal = document.getElementById('settingsModal');
+        const content = document.getElementById('settingsModalContent');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => {
+            content.classList.remove('scale-95', 'opacity-0');
+            content.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function closeSettingsModal(event) {
+        const modal = document.getElementById('settingsModal');
+        const content = document.getElementById('settingsModalContent');
+        content.classList.remove('scale-100', 'opacity-100');
+        content.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }, 200);
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('settingsModal');
+            if (!modal.classList.contains('hidden')) {
+                closeSettingsModal();
+            }
+        }
+    });
+</script>
+
+<style>
+    .truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
+{% endblock %}

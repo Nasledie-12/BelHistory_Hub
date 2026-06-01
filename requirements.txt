@@ -1,0 +1,9 @@
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-Login
+Flask-Admin
+pymysql
+cryptography
+python-dotenv
+Pillow

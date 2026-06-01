@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Nasledie - Интерактивная платформа</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset_url('css/style.css') }}">
+</head>
+<body class="min-h-screen bg-white text-slate-800 flex flex-col">
+    <div id="app-notifications" class="pointer-events-none fixed inset-x-0 top-4 z-[120] flex justify-center px-4" aria-live="polite" aria-atomic="true"></div>
+    {% include 'includes/header.html' %}
+
+    <main class="flex-1">
+        {% include 'includes/flash_messages.html' %}
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include 'includes/footer.html' %}
+    <script src="{{ asset_url('js/modules/quiz.js') }}"></script>
+    <script src="{{ asset_url('js/modules/collection.js') }}"></script>
+    <script src="{{ asset_url('js/modules/ui.js') }}"></script>
+    <script src="{{ asset_url('js/main.js') }}"></script>
+</body>
+</html>

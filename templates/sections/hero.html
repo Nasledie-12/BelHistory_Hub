@@ -1,0 +1,76 @@
+<section class="hero-bg hero-section overflow-hidden py-10 md:py-16">
+    <div class="container mx-auto px-4">
+        <div class="hero-shell mx-auto max-w-6xl rounded-[2rem] bg-white/85 shadow-[0_24px_80px_rgba(148,163,184,0.3)] ring-1 ring-white/60 backdrop-blur">
+            <div class="hero-sky hero-sky-image relative overflow-hidden rounded-[2rem] p-6 md:p-10">
+                <div class="hero-cloud hero-cloud-left"></div>
+                <div class="hero-cloud hero-cloud-right"></div>
+                <div class="relative z-10 text-center">
+                    <p class="mx-auto mb-4 inline-flex items-center rounded-full bg-white/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 shadow-sm">
+                        История, культура и традиции Беларуси
+                    </p>
+                    <h1 class="mx-auto max-w-3xl text-4xl font-extrabold leading-tight text-slate-900 md:text-6xl">
+                        Открой наследие Беларуси!
+                    </h1>
+                    <p class="mx-auto mt-5 max-w-2xl text-base text-slate-500 md:text-xl">
+                        Изучайте исторические объекты, национальных героев и традиции страны в современном интерактивном формате.
+                    </p>
+                    <div class="mt-8 flex flex-wrap justify-center gap-4">
+                        <a href="{{ url_for('treasures') }}" class="accent-red text-white px-8 py-4 rounded-2xl font-bold inline-flex items-center accent-red-hover transition shadow-lg group">
+                            Начать изучение
+                            <i class="fas fa-arrow-right ml-3 group-hover:translate-x-1 transition"></i>
+                        </a>
+                        <a href="{{ url_for('places_page') }}" class="inline-flex items-center rounded-2xl bg-white px-8 py-4 font-bold text-slate-700 shadow-md transition hover:text-red-500">
+                            Смотреть места
+                        </a>
+                    </div>
+                </div>
+
+                <div class="hero-grid relative z-10 mt-10 grid gap-6 lg:grid-cols-[1.05fr_0.9fr_1.05fr]">
+                    <article class="hero-story-card hero-story-card-left">
+                        <img src="{{ url_for('static', filename='img/places/mir_castle.jpg') }}" alt="Замки Беларуси - обзор исторической архитектуры" class="hero-story-image">
+                        <div class="hero-story-content">
+                            <h3>Древние города</h3>
+                            <p>Путешествие в прошлое через архитектуру и хроники.</p>
+                            <a href="{{ url_for('places_page') }}">Исследовать <i class="fas fa-chevron-right"></i></a>
+                        </div>
+                    </article>
+
+                    <article class="hero-story-card hero-story-card-center">
+                        <img src="{{ url_for('static', filename='img/heroes/skorina.jpg') }}" alt="Франциск Скорина - белорусский просветитель и первопечатник" class="hero-story-image">
+                        <div class="hero-story-content">
+                            <h3>Национальные герои</h3>
+                            <p>Путешествие в прошлое через личности, подвиги и культурную память.</p>
+                            <a href="{{ url_for('heroes_page') }}">Открыть героя <i class="fas fa-chevron-right"></i></a>
+                        </div>
+                    </article>
+
+                    <article class="hero-story-card hero-story-card-right">
+                        <img src="{{ url_for('static', filename='img/artifacts/statut_vkl.jpg') }}" alt="Статут ВКЛ - выдающийся артефакт правовой истории Беларуси" class="hero-story-image">
+                        <div class="hero-story-content">
+                            <h3>Артефакты и сокровища</h3>
+                            <p>Путешествие в прошлое через реликвии, документы и знаковые памятники.</p>
+                            <a href="{{ url_for('treasures') }}">Смотреть артефакты <i class="fas fa-chevron-right"></i></a>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="relative z-10 mt-6 grid gap-4 md:grid-cols-2">
+                    <a href="{{ url_for('quizzes_page') }}" class="hero-feature-pill">
+                        <div class="hero-feature-icon"><i class="fas fa-scroll"></i></div>
+                        <div>
+                            <h4>Тесты и викторины</h4>
+                            <p>Откройте отдельную страницу с вопросами</p>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('treasures') }}" class="hero-feature-pill">
+                        <div class="hero-feature-icon"><i class="fas fa-vase"></i></div>
+                        <div>
+                            <h4>Коллекция артефактов</h4>
+                            <p>Открывайте отдельный каталог сокровищ</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

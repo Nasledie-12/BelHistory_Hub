@@ -1,0 +1,510 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="relative py-12 min-h-screen">
+    <!-- Яркое фоновое изображение -->
+    <div class="absolute inset-0 z-0">
+        <img src="{{ url_for('static', filename='img/site/background_1.png') }}" alt="Фон Беларусь" class="w-full h-full object-cover brightness-105">
+        <div class="absolute inset-0 bg-gradient-to-br from-white/85 via-white/80 to-white/90"></div>
+    </div>
+
+    <div class="relative z-10 container mx-auto px-4 max-w-7xl">
+
+        <!-- ВЕРХНИЙ БАННЕР (красный, как на других страницах) -->
+        <div class="relative mb-10 overflow-hidden rounded-2xl bg-white border border-gray-200 shadow-md">
+            <div class="absolute inset-0 opacity-5">
+                <img src="{{ url_for('static', filename='img/site/6.jpg') }}" alt="Аист" class="w-full h-full object-cover">
+            </div>
+            <div class="relative z-10 p-8 md:p-10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="inline-flex items-center gap-2 bg-red-50 rounded-full px-3 py-1 mb-4">
+                            <i class="fas fa-gamepad text-red-500 text-xs"></i>
+                            <span class="text-red-600 text-xs font-bold uppercase tracking-wider">Игровая зона</span>
+                        </div>
+                        <h1 class="text-3xl md:text-5xl font-bold">
+                            <span class="bg-gradient-to-r from-red-600 to-green-600 bg-clip-text text-transparent">Игры и викторины</span>
+                        </h1>
+                        <div class="w-20 h-1 bg-gradient-to-r from-red-500 to-green-500 mt-4 mb-5 rounded-full"></div>
+                        <p class="text-gray-500 max-w-2xl leading-relaxed text-lg">
+                            Проверьте свои знания в игровой форме. Соревнуйтесь и повышайте свой уровень!
+                        </p>
+                    </div>
+                    <div class="hidden lg:block">
+                        <img src="{{ url_for('static', filename='img/site/6.jpg') }}" alt="Аист" class="h-28 w-auto object-contain opacity-80">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- СТАТИСТИКА -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+            <div class="bg-white/90 backdrop-blur-sm rounded-xl p-4 text-center shadow-md border border-gray-100">
+                <div class="text-2xl font-bold text-red-600">{{ quizzes|length }}</div>
+                <p class="text-[10px] font-semibold text-gray-500">Всего вопросов</p>
+            </div>
+            <div class="bg-white/90 backdrop-blur-sm rounded-xl p-4 text-center shadow-md border border-gray-100">
+                <div class="text-2xl font-bold text-amber-600">{{ completed_quizzes|default(0) }}</div>
+                <p class="text-[10px] font-semibold text-gray-500">Пройдено</p>
+            </div>
+            <div class="bg-white/90 backdrop-blur-sm rounded-xl p-4 text-center shadow-md border border-gray-100">
+                <div class="text-2xl font-bold text-green-600">{{ progress_percent|default(0) }}%</div>
+                <p class="text-[10px] font-semibold text-gray-500">Прогресс</p>
+            </div>
+            <div class="bg-gradient-to-r from-red-500 to-amber-500 rounded-xl p-4 text-center shadow-lg">
+                <div class="text-2xl font-bold text-white">🏆</div>
+                <p class="text-[10px] font-semibold text-white/90">Рейтинг</p>
+            </div>
+        </div>
+
+        <!-- ТРИ КНОПКИ: ТЕСТ / ВИКТОРИНА / ИГРЫ -->
+        <div class="flex justify-center gap-4 mb-8">
+            <a href="{{ url_for('quizzes_page', mode='test', keyword=keyword) }}" class="group relative">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-red-500 to-red-600 rounded-full blur opacity-0 group-hover:opacity-50 transition"></div>
+                <div class="relative px-8 py-3 rounded-full font-bold text-sm transition-all {% if quiz_mode == 'test' %}bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg{% else %}bg-white text-gray-700 border-2 border-gray-200 hover:border-red-400 hover:text-red-500{% endif %}">
+                    <i class="fas fa-list-check mr-2"></i>Тест
+                </div>
+            </a>
+            <a href="{{ url_for('quizzes_page', mode='quiz', keyword=keyword) }}" class="group relative">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full blur opacity-0 group-hover:opacity-50 transition"></div>
+                <div class="relative px-8 py-3 rounded-full font-bold text-sm transition-all {% if quiz_mode == 'quiz' %}bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-lg{% else %}bg-white text-gray-700 border-2 border-gray-200 hover:border-amber-400 hover:text-amber-500{% endif %}">
+                    <i class="fas fa-scroll mr-2"></i>Викторина
+                </div>
+            </a>
+            <!-- НОВАЯ КНОПКА ИГРЫ - теперь это ссылка на якорь, а не перезагрузка -->
+            <a href="#games-section" class="group relative games-button">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full blur opacity-0 group-hover:opacity-50 transition"></div>
+                <div class="relative px-8 py-3 rounded-full font-bold text-sm transition-all {% if quiz_mode == 'games' %}bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg{% else %}bg-white text-gray-700 border-2 border-gray-200 hover:border-green-400 hover:text-green-500{% endif %}">
+                    <i class="fas fa-gamepad mr-2"></i>Игры
+                </div>
+            </a>
+        </div>
+
+        <!-- ========== ОСНОВНЫЕ ВОПРОСЫ ТЕСТА / ВИКТОРИНЫ (вверху) ========== -->
+        <div class="grid gap-6 lg:grid-cols-3 mt-6 mb-12">
+            <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-5 text-white shadow-lg">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-red-500 to-amber-500 flex items-center justify-center">
+                        <i class="fas fa-{% if quiz_mode == 'test' %}list-check{% else %}scroll{% endif %} text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold uppercase text-red-400">Режим</p>
+                        <h3 class="text-lg font-bold">{% if quiz_mode == 'test' %}Тест{% elif quiz_mode == 'quiz' %}Викторина{% else %}Игры{% endif %}</h3>
+                    </div>
+                </div>
+                <div class="mt-4 p-3 bg-white/10 rounded-lg">
+                    <div class="flex justify-between text-xs mb-1">
+                        <span>Прогресс</span>
+                        <span class="text-amber-400">{{ progress_percent|default(0) }}%</span>
+                    </div>
+                    <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-red-500 to-amber-500 rounded-full" style="width: {{ progress_percent|default(0) }}%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2">
+                {% if quiz_mode == 'games' %}
+                    <!-- Если выбран режим ИГРЫ, показываем сообщение, что игры внизу -->
+                    <div class="bg-white/95 backdrop-blur-sm rounded-xl p-8 text-center border border-gray-100">
+                        <i class="fas fa-gamepad text-5xl text-green-500 mb-3"></i>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Режим игр</h3>
+                        <p class="text-gray-500">Прокрутите вниз, чтобы поиграть в 4 увлекательные игры!</p>
+                        <a href="#games-section" class="inline-block mt-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition games-button-inline">Перейти к играм ↓</a>
+                    </div>
+                {% elif not quizzes %}
+                    <div class="bg-white/95 backdrop-blur-sm rounded-xl p-8 text-center border border-gray-100">
+                        <i class="fas fa-scroll text-4xl text-gray-300 mb-3"></i>
+                        <h3 class="text-lg font-bold text-gray-700">Вопросы не найдены</h3>
+                    </div>
+                {% elif quiz_mode == 'test' %}
+                    <div class="bg-white/95 backdrop-blur-sm rounded-xl p-5 shadow-md border border-gray-100">
+                        <div id="testIntro" class="text-center py-6">
+                            <div class="w-16 h-16 mx-auto bg-gradient-to-r from-red-500 to-amber-500 rounded-full flex items-center justify-center mb-4 shadow-lg animate-pulse">
+                                <i class="fas fa-play text-white text-xl ml-1"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Готовы к тесту?</h3>
+                            <p class="text-gray-500 text-sm mb-5">{{ quizzes|length }} вопросов</p>
+                            <button id="startTestBtn" class="px-6 py-2.5 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition">Начать тест</button>
+                        </div>
+                        <div id="testRunner" class="hidden">
+                            {% for quiz in quizzes %}
+                                <div class="test-question hidden border-b border-gray-100 pb-4 mb-4 last:border-0" data-quiz-id="{{ quiz.id }}">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-7 h-7 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs font-bold">{{ loop.index }}</span>
+                                            <span class="text-xs text-gray-500">из {{ quizzes|length }}</span>
+                                        </div>
+                                        <span class="test-question-status text-[10px] px-2 py-0.5 rounded-full bg-gray-100">Ожидает</span>
+                                    </div>
+                                    <h3 class="text-base font-bold text-gray-800 mb-3">{{ quiz.question }}</h3>
+                                    <div class="space-y-2">
+                                        {% for option in quiz.display_options %}
+                                            <button class="test-option-btn w-full text-left px-4 py-2 rounded-lg border border-gray-200 hover:bg-red-50 hover:border-red-300 transition text-gray-700 text-sm" data-answer="{{ option }}">
+                                                {{ option }}
+                                            </button>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="test-result mt-3 hidden"></div>
+                                    <div class="mt-4 flex justify-end">
+                                        <button class="test-next-btn hidden px-4 py-1.5 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700 transition">Следующий →</button>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <div id="testFinish" class="hidden text-center py-6">
+                                <div class="w-16 h-16 mx-auto bg-green-500 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                                    <i class="fas fa-trophy text-white text-2xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">Тест завершён!</h3>
+                                <button id="restartTestBtn" class="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition">Пройти ещё раз</button>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="space-y-3">
+                        {% for quiz in quizzes %}
+                            {% set is_completed = quiz.id in completed_quiz_ids|default([]) %}
+                            <div class="bg-white/95 backdrop-blur-sm rounded-xl overflow-hidden shadow-sm border border-gray-100">
+                                <div class="flex">
+                                    <div class="w-10 bg-gradient-to-b from-red-50 to-amber-50 flex items-center justify-center">
+                                        <span class="text-base font-bold text-red-500">{{ loop.index }}</span>
+                                    </div>
+                                    <div class="flex-1 p-3">
+                                        <h3 class="text-sm font-semibold text-gray-800 mb-2">{{ quiz.question }}</h3>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                            {% for option in quiz.display_options %}
+                                                <button data-quiz-id="{{ quiz.id }}" data-answer="{{ option }}" class="quiz-answer-btn text-left px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-red-50 hover:border-red-300 transition text-gray-700 text-xs {% if is_completed %}opacity-50 cursor-not-allowed{% endif %}" {% if is_completed %}disabled{% endif %}>
+                                                    {{ option }}
+                                                </button>
+                                            {% endfor %}
+                                        </div>
+                                        <div id="quiz-result-{{ quiz.id }}" class="mt-2 text-xs {% if is_completed %}text-green-600 bg-green-50 p-1 rounded{% else %}hidden{% endif %}">
+                                            {% if is_completed %}✓ Пройдено{% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ========== 4 ИГРЫ (внизу, с якорем) ========== -->
+        <div id="games-section" class="scroll-mt-20">
+            <div class="flex items-center justify-center gap-3 mb-6">
+                <div class="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-gamepad text-green-600 text-xl"></i>
+                    <h2 class="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">Игровая зона</h2>
+                </div>
+                <div class="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+
+                <!-- ИГРА 1 - Угадай по картинке -->
+                <div class="group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 px-5 py-3 border-b border-indigo-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-md group-hover:scale-110 transition">
+                                <i class="fas fa-image text-white text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Угадай по картинке</h3>
+                                <p class="text-xs text-gray-500">5 вопросов • проверь наблюдательность</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="grid md:grid-cols-2 gap-5">
+                            <div class="relative h-48 rounded-xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 shadow-inner">
+                                <img id="game1Image" class="w-full h-full object-cover" src="{{ url_for('static', filename='img/places/mir_castle.jpg') }}" alt="Что это?">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+                            </div>
+                            <div>
+                                <div id="game1Options" class="space-y-2"></div>
+                                <div id="game1Result" class="mt-3 text-sm hidden rounded-lg"></div>
+                                <button id="game1NextBtn" class="mt-4 w-full px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-sm font-semibold rounded-lg hover:shadow-md transition transform hover:scale-[1.02]">Следующее фото →</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ИГРА 2 - Найди пару -->
+                <div class="group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 via-orange-500 to-amber-500"></div>
+                    <div class="bg-gradient-to-r from-red-50 to-orange-50 px-5 py-3 border-b border-red-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center shadow-md group-hover:scale-110 transition">
+                                <i class="fas fa-hand-peace text-white text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Найди пару</h3>
+                                <p class="text-xs text-gray-500">4 пары • тренируй память</p>
+                            </div>
+                            <div class="ml-auto opacity-20 group-hover:opacity-40 transition">
+                                <i class="fas fa-puzzle-piece text-2xl text-red-500"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div id="memoryGame" class="grid grid-cols-4 gap-2 max-w-md mx-auto"></div>
+                        <div id="memoryResult" class="mt-3 text-center text-sm hidden"></div>
+                        <button id="resetMemoryBtn" class="mt-4 w-full px-4 py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white text-sm font-semibold rounded-lg hover:shadow-md transition transform hover:scale-[1.02] flex items-center justify-center gap-2">
+                            <i class="fas fa-random text-xs"></i>
+                            Перемешать
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ИГРА 3 - Историческая викторина -->
+                <div class="group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500"></div>
+                    <div class="bg-gradient-to-r from-blue-50 to-cyan-50 px-5 py-3 border-b border-blue-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-md group-hover:scale-110 transition">
+                                <i class="fas fa-history text-white text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Историческая викторина</h3>
+                                <p class="text-xs text-gray-500">5 вопросов • проверь эрудицию</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div id="quizQuestion" class="text-center text-lg font-bold text-gray-800 mb-4">Загрузка...</div>
+                        <div id="quizOptions" class="space-y-2 max-w-md mx-auto"></div>
+                        <div id="quizResult" class="mt-3 text-center text-sm hidden"></div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span id="quizScore" class="text-sm font-bold text-gray-700 bg-gradient-to-r from-amber-100 to-yellow-100 px-4 py-1.5 rounded-full shadow-sm">🏆 Счёт: 0</span>
+                            <button id="nextQuestionBtn" class="px-5 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-sm font-semibold rounded-lg hover:shadow-md transition transform hover:scale-[1.02]">Следующий →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ИГРА 4 - Угадай год -->
+                <div class="group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-500"></div>
+                    <div class="bg-gradient-to-r from-amber-50 to-yellow-50 px-5 py-3 border-b border-amber-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center shadow-md group-hover:scale-110 transition">
+                                <i class="fas fa-calendar-alt text-white text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Угадай год</h3>
+                                <p class="text-xs text-gray-500">5 событий • знай историю</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div id="yearEvent" class="text-center text-lg font-bold text-gray-800 mb-4">Загрузка...</div>
+                        <div id="yearOptions" class="grid grid-cols-2 gap-2 max-w-md mx-auto"></div>
+                        <div id="yearResult" class="mt-3 text-center text-sm hidden"></div>
+                        <button id="nextYearBtn" class="mt-4 w-full px-4 py-2 bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-sm font-semibold rounded-lg hover:shadow-md transition transform hover:scale-[1.02]">Следующее событие →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Декоративная линия -->
+        <div class="flex justify-center items-center gap-2 mt-10">
+            <div class="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+            <div class="flex gap-1">
+                <div class="w-1.5 h-1.5 rounded-full bg-red-400"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+            </div>
+            <div class="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // ПЛАВНАЯ ПРОКРУТКА К ИГРОВОЙ ЗОНЕ ПРИ НАЖАТИИ НА КНОПКУ "ИГРЫ"
+    document.querySelectorAll('.games-button, .games-button-inline').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault(); // предотвращаем стандартный переход по якорю
+            const gamesSection = document.getElementById('games-section');
+            if (gamesSection) {
+                gamesSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // ИГРА 1: УГАДАЙ ПО КАРТИНКЕ
+    const game1Images = [
+        { src: "img/places/mir_castle.jpg", correct: "Мирский замок", options: ["Мирский замок", "Несвижский замок", "Брестская крепость", "Лидский замок"] },
+        { src: "img/places/nesvizh_castle.jpg", correct: "Несвижский замок", options: ["Мирский замок", "Несвижский замок", "Брестская крепость", "Софийский собор"] },
+        { src: "img/places/brest_fortress.jpg", correct: "Брестская крепость", options: ["Мирский замок", "Несвижский замок", "Брестская крепость", "Гродненский замок"] },
+        { src: "img/places/sofia_cathedral.jpg", correct: "Софийский собор", options: ["Софийский собор", "Петропавловский собор", "Костёл", "Мечеть"] },
+        { src: "img/places/belovezhskaya_pushcha.jpg", correct: "Беловежская пуща", options: ["Беловежская пуща", "Припятский заповедник", "Нарочанский парк", "Браславские озера"] }
+    ];
+    let g1Idx = 0, g1Answered = [false,false,false,false,false];
+
+    function loadGame1() {
+        const img = game1Images[g1Idx];
+        document.getElementById('game1Image').src = "{{ url_for('static', filename='') }}" + img.src;
+        document.getElementById('game1Options').innerHTML = img.options.map(opt => `<button data-answer="${opt}" class="game1-opt w-full text-left px-3 py-2 rounded-lg border border-gray-200 hover:bg-indigo-50 transition text-gray-700 text-sm">${opt}</button>`).join('');
+        document.getElementById('game1Result').classList.add('hidden');
+        document.querySelectorAll('.game1-opt').forEach(btn => {
+            btn.onclick = () => {
+                if(g1Answered[g1Idx]) return;
+                const res = document.getElementById('game1Result');
+                if(btn.dataset.answer === img.correct) {
+                    res.innerHTML = '✅ Правильно!'; res.className = 'mt-3 text-sm text-green-600 bg-green-50 p-2 rounded-lg'; res.classList.remove('hidden'); g1Answered[g1Idx] = true;
+                } else {
+                    res.innerHTML = `❌ Неправильно. Ответ: ${img.correct}`; res.className = 'mt-3 text-sm text-red-600 bg-red-50 p-2 rounded-lg'; res.classList.remove('hidden');
+                }
+            };
+        });
+    }
+    document.getElementById('game1NextBtn').onclick = () => { if(g1Idx + 1 < game1Images.length) { g1Idx++; loadGame1(); } else { alert('🎉 Игра пройдена!'); } };
+    loadGame1();
+
+    // ИГРА 2: НАЙДИ ПАРУ
+    const memItems = [
+        { name: "Мирский замок", img: "img/places/mir_castle.jpg" },
+        { name: "Несвижский замок", img: "img/places/nesvizh_castle.jpg" },
+        { name: "Брестская крепость", img: "img/places/brest_fortress.jpg" },
+        { name: "Софийский собор", img: "img/places/sofia_cathedral.jpg" }
+    ];
+    let memCards = [], flipped = [], memMatched = 0, memLock = false;
+
+    function shuffleMem() {
+        memCards = [];
+        memItems.forEach((item, i) => { memCards.push({ id: i*2, name: item.name, img: item.img, matched: false, flipped: false }); memCards.push({ id: i*2+1, name: item.name, img: item.img, matched: false, flipped: false }); });
+        memCards = memCards.sort(() => Math.random() - 0.5);
+        memMatched = 0; flipped = []; memLock = false;
+        renderMem();
+        document.getElementById('memoryResult').classList.add('hidden');
+    }
+
+    function renderMem() {
+        const cont = document.getElementById('memoryGame');
+        cont.innerHTML = memCards.map((card, idx) => `<div class="mem-card cursor-pointer" data-idx="${idx}"><div class="relative w-full aspect-square rounded-lg overflow-hidden shadow-sm ${card.matched ? 'opacity-50' : ''}"><div class="absolute inset-0 bg-indigo-100 flex items-center justify-center transition ${card.flipped || card.matched ? 'opacity-0' : 'opacity-100'}"><i class="fas fa-question text-xl text-indigo-400"></i></div><div class="absolute inset-0 transition ${card.flipped || card.matched ? 'opacity-100' : 'opacity-0'}"><img src="{{ url_for('static', filename='') }}${card.img}" class="w-full h-full object-cover"></div></div></div>`).join('');
+        document.querySelectorAll('.mem-card').forEach(el => el.addEventListener('click', () => flipCard(parseInt(el.dataset.idx))));
+    }
+
+    function flipCard(idx) {
+        if(memLock || memCards[idx].matched || memCards[idx].flipped) return;
+        memCards[idx].flipped = true; renderMem(); flipped.push(idx);
+        if(flipped.length === 2) {
+            memLock = true;
+            const a = memCards[flipped[0]], b = memCards[flipped[1]];
+            if(a.name === b.name) { a.matched = true; b.matched = true; memMatched++; flipped = []; renderMem(); memLock = false; if(memMatched === memItems.length) document.getElementById('memoryResult').innerHTML = '🎉 Поздравляем! Все пары найдены!'; }
+            else { setTimeout(() => { memCards[flipped[0]].flipped = false; memCards[flipped[1]].flipped = false; flipped = []; renderMem(); memLock = false; }, 800); }
+        }
+    }
+    document.getElementById('resetMemoryBtn').onclick = shuffleMem;
+    shuffleMem();
+
+    // ИГРА 3: ВИКТОРИНА
+    const quizData = [
+        { q: "Первое упоминание Полоцка?", opts: ["862", "988", "1021", "1240"], a: "862" },
+        { q: "Первый белорусский первопечатник?", opts: ["Франциск Скорина", "Иван Фёдоров", "Симеон Полоцкий", "Кирилл Туровский"], a: "Франциск Скорина" },
+        { q: "Грюнвальдская битва?", opts: ["1385", "1410", "1517", "1569"], a: "1410" },
+        { q: "Автор «Песнь о зубре»?", opts: ["Николай Гусовский", "Франциск Скорина", "Лев Сапега", "Янка Купала"], a: "Николай Гусовский" },
+        { q: "Конституция Беларуси?", opts: ["1991", "1994", "1996", "2000"], a: "1994" }
+    ];
+    let qIdx = 0, qScore = 0, qAns = [false,false,false,false,false];
+
+    function loadQuiz() {
+        const q = quizData[qIdx];
+        document.getElementById('quizQuestion').innerHTML = q.q;
+        document.getElementById('quizOptions').innerHTML = q.opts.map(opt => `<button data-answer="${opt}" class="quiz-opt w-full text-left px-3 py-2 rounded-lg border border-gray-200 hover:bg-blue-50 transition text-gray-700 text-sm">${opt}</button>`).join('');
+        document.getElementById('quizResult').classList.add('hidden');
+        document.getElementById('quizScore').innerHTML = `Счёт: ${qScore}`;
+        document.querySelectorAll('.quiz-opt').forEach(btn => {
+            btn.onclick = () => {
+                if(qAns[qIdx]) return;
+                const res = document.getElementById('quizResult');
+                if(btn.dataset.answer === q.a) { qScore += 10; res.innerHTML = '✅ Правильно! +10'; res.className = 'mt-3 text-sm text-green-600 bg-green-50 p-2 rounded-lg'; res.classList.remove('hidden'); qAns[qIdx] = true; document.getElementById('quizScore').innerHTML = `Счёт: ${qScore}`; }
+                else { res.innerHTML = `❌ Неправильно. Ответ: ${q.a}`; res.className = 'mt-3 text-sm text-red-600 bg-red-50 p-2 rounded-lg'; res.classList.remove('hidden'); }
+            };
+        });
+    }
+    document.getElementById('nextQuestionBtn').onclick = () => { if(qIdx + 1 < quizData.length) { qIdx++; loadQuiz(); } else { alert('🎉 Викторина пройдена!'); } };
+    loadQuiz();
+
+    // ИГРА 4: УГАДАЙ ГОД
+    const yearData = [
+        { e: "Первое упоминание Полоцка", a: "862" },
+        { e: "Кревская уния", a: "1385" },
+        { e: "Грюнвальдская битва", a: "1410" },
+        { e: "Первая книга Скорины", a: "1517" },
+        { e: "Конституция Беларуси", a: "1994" }
+    ];
+    let yIdx = 0, yAns = [false,false,false,false,false];
+
+    function loadYear() {
+        const e = yearData[yIdx];
+        const num = parseInt(e.a);
+        const opts = [num-20, num-10, num, num+10, num+20].sort(() => Math.random() - 0.5);
+        document.getElementById('yearEvent').innerHTML = e.e;
+        document.getElementById('yearOptions').innerHTML = opts.map(opt => `<button data-answer="${opt}" class="year-opt px-3 py-2 rounded-lg border border-gray-200 hover:bg-amber-50 transition text-gray-700 text-sm">${opt} год</button>`).join('');
+        document.getElementById('yearResult').classList.add('hidden');
+        document.querySelectorAll('.year-opt').forEach(btn => {
+            btn.onclick = () => {
+                if(yAns[yIdx]) return;
+                const res = document.getElementById('yearResult');
+                if(btn.dataset.answer === e.a) { res.innerHTML = '✅ Правильно! +10'; res.className = 'mt-3 text-sm text-green-600 bg-green-50 p-2 rounded-lg'; res.classList.remove('hidden'); yAns[yIdx] = true; }
+                else { res.innerHTML = `❌ Неправильно. Ответ: ${e.a} год`; res.className = 'mt-3 text-sm text-red-600 bg-red-50 p-2 rounded-lg'; res.classList.remove('hidden'); }
+            };
+        });
+    }
+    document.getElementById('nextYearBtn').onclick = () => { if(yIdx + 1 < yearData.length) { yIdx++; loadYear(); } else { alert('🎉 Игра пройдена!'); } };
+    loadYear();
+
+    // ОСНОВНЫЕ ТЕСТЫ
+    const startBtn = document.getElementById('startTestBtn');
+    const restartBtn = document.getElementById('restartTestBtn');
+    const testRunner = document.getElementById('testRunner');
+    const testIntro = document.getElementById('testIntro');
+    const testFinish = document.getElementById('testFinish');
+    let curIdx = 0, testQs = [];
+
+    function updateTestProg(p, c) {
+        const pSpan = document.getElementById('quiz-progress-percent'); const bar = document.getElementById('quiz-progress-bar'); const cSpan = document.getElementById('quiz-completed-count');
+        if(pSpan) pSpan.textContent = `${p}%`; if(bar) bar.style.width = `${p}%`; if(cSpan) cSpan.textContent = c;
+    }
+
+    if(startBtn) startBtn.onclick = () => { testQs = document.querySelectorAll('.test-question'); if(testQs.length) { testIntro.classList.add('hidden'); testRunner.classList.remove('hidden'); showTestQ(0); } };
+    function showTestQ(i) { testQs.forEach((q, idx) => { if(idx === i) q.classList.remove('hidden'); else q.classList.add('hidden'); }); curIdx = i; }
+    function showNextTest() { if(curIdx + 1 < testQs.length) showTestQ(curIdx + 1); else { testRunner.classList.add('hidden'); testFinish.classList.remove('hidden'); } }
+
+    document.querySelectorAll('.test-option-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const qd = this.closest('.test-question'); const quizId = qd.dataset.quizId; const ans = this.dataset.answer; const resDiv = qd.querySelector('.test-result'); const nxtBtn = qd.querySelector('.test-next-btn'); const statSpan = qd.querySelector('.test-question-status');
+            try { const resp = await fetch('/quiz', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: `quiz_id=${quizId}&answer=${encodeURIComponent(ans)}` }); const data = await resp.json();
+                if(data.status === 'success') { if(resDiv) { resDiv.innerHTML = '✅ Правильно!'; resDiv.classList.remove('hidden'); resDiv.className = 'test-result mt-2 text-green-600 bg-green-50 p-2 rounded-lg text-sm'; } if(nxtBtn) nxtBtn.classList.remove('hidden'); if(statSpan) { statSpan.innerHTML = '✅ Пройдено'; statSpan.className = 'test-question-status text-[10px] px-2 py-0.5 rounded-full bg-green-100 text-green-600'; } updateTestProg(data.progress_percent, data.completed_quizzes); }
+                else { if(resDiv) { resDiv.innerHTML = '❌ Неправильно'; resDiv.classList.remove('hidden'); resDiv.className = 'test-result mt-2 text-red-600 bg-red-50 p-2 rounded-lg text-sm'; setTimeout(() => resDiv.classList.add('hidden'), 1000); } }
+            } catch(e) { console.error(e); }
+        });
+    });
+    document.querySelectorAll('.test-next-btn').forEach(btn => btn.addEventListener('click', showNextTest));
+    if(restartBtn) restartBtn.addEventListener('click', () => window.location.reload());
+
+    document.querySelectorAll('.quiz-answer-btn').forEach(btn => {
+        btn.addEventListener('click', async function() { if(this.disabled) return; const quizId = this.dataset.quizId; const ans = this.dataset.answer; const resDiv = document.getElementById(`quiz-result-${quizId}`);
+            try { const resp = await fetch('/quiz', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: `quiz_id=${quizId}&answer=${encodeURIComponent(ans)}` }); const data = await resp.json();
+                if(data.status === 'success') { if(resDiv) { resDiv.innerHTML = '✅ Правильно!'; resDiv.classList.remove('hidden'); resDiv.className = 'mt-1 text-xs text-green-600 bg-green-50 p-1 rounded'; } this.disabled = true; this.classList.add('opacity-50', 'cursor-not-allowed'); updateTestProg(data.progress_percent, data.completed_quizzes); }
+                else { if(resDiv) { resDiv.innerHTML = '❌ Неправильно'; resDiv.classList.remove('hidden'); resDiv.className = 'mt-1 text-xs text-red-600 bg-red-50 p-1 rounded'; setTimeout(() => resDiv.classList.add('hidden'), 1000); } }
+            } catch(e) { console.error(e); }
+        });
+    });
+</script>
+
+<style>
+    .mem-card { transition: all 0.2s; }
+    .mem-card:hover { transform: scale(1.02); }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    .animate-pulse { animation: pulse 1s ease-in-out infinite; }
+    .scroll-mt-20 { scroll-margin-top: 5rem; }
+</style>
+{% endblock %}
+```
