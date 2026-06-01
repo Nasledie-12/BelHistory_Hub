@@ -4,7 +4,7 @@ import random
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
-from flask import Flask, abort, flash, redirect, render_template, request, send_from_directory, url_for
+from flask import Flask, abort, flash, jsonify, redirect, render_template, request, send_from_directory, url_for
 from flask_admin import Admin
 from flask_admin import AdminIndexView
 from flask_admin.contrib.sqla import ModelView
@@ -347,6 +347,12 @@ def ensure_database_ready():
                     connection.execute(text("ALTER TABLE quizzes ADD COLUMN mode VARCHAR(16)"))
                     connection.execute(text("UPDATE quizzes SET mode = 'quiz' WHERE mode IS NULL OR mode = ''"))
 
+        if HistoricalObject.query.count() == 0:
+            from seed import seed_data
+
+            logger.info('Database is empty, loading seed data...')
+            seed_data()
+
         sync_historical_events_content()
         sync_national_holidays_content()
         sync_learning_content(commit=False)
@@ -476,6 +482,19 @@ def health():
     return 'ok', 200
 
 
+@app.route('/status')
+def status():
+    if _database_ready:
+        return jsonify({'status': 'ready', 'database': 'ok'})
+
+    try:
+        ensure_database_ready()
+        return jsonify({'status': 'ready', 'database': 'ok'})
+    except Exception as exc:
+        logger.exception('Status check failed')
+        return jsonify({'status': 'error', 'database': str(exc)}), 503
+
+
 @app.route('/favicon.ico')
 def favicon():
     return '', 204
@@ -483,17 +502,14 @@ def favicon():
 
 @app.before_request
 def prepare_database():
-    if request.endpoint in ('health', 'favicon'):
+    if request.endpoint in ('health', 'favicon', 'status'):
         return
 
     try:
         ensure_database_ready()
     except Exception:
-        return (
-            'Ошибка базы данных. Проверьте DATABASE_URL и логи сервиса.',
-            503,
-            {'Content-Type': 'text/plain; charset=utf-8'},
-        )
+        logger.exception('Database initialization failed on %s', request.path)
+        abort(503)
 
 
 @login.user_loader

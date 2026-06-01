@@ -48,14 +48,30 @@ def _normalize_database_url(url):
 
 
 def _build_database_uri():
-    database_url = os.environ.get('DATABASE_URL')
+    if os.environ.get('FORCE_SQLITE') == '1':
+        database_url = None
+    else:
+        database_url = os.environ.get('DATABASE_URL')
+
     if database_url:
         return _normalize_database_url(database_url)
+
     sqlite_path = _default_sqlite_path() or INSTANCE_DIR / 'belhistory.db'
     return f'sqlite:///{sqlite_path.as_posix()}'
+
+
+def _engine_options():
+    uri = _build_database_uri()
+    options = {'pool_pre_ping': True}
+
+    if uri.startswith('postgresql'):
+        options['connect_args'] = {'connect_timeout': 5}
+
+    return options
 
 
 class Config:
     SECRET_KEY = _load_or_create_secret_key()
     SQLALCHEMY_DATABASE_URI = _build_database_uri()
+    SQLALCHEMY_ENGINE_OPTIONS = _engine_options()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
