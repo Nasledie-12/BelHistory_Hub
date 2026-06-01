@@ -326,7 +326,14 @@ def sync_national_holidays_content():
         db.session.delete(holiday)
 
 
+_database_ready = False
+
+
 def ensure_database_ready():
+    global _database_ready
+    if _database_ready:
+        return
+
     with app.app_context():
         db.create_all()
         inspector = inspect(db.engine)
@@ -341,6 +348,9 @@ def ensure_database_ready():
         sync_historical_events_content()
         sync_national_holidays_content()
         sync_learning_content()
+        db.session.commit()
+
+    _database_ready = True
 
 
 def build_quiz_options(quiz):
@@ -454,7 +464,17 @@ def sync_learning_content():
     db.session.commit()
 
 
-ensure_database_ready()
+@app.route('/health')
+def health():
+    return 'ok', 200
+
+
+@app.before_request
+def prepare_database():
+    if request.endpoint == 'health':
+        return
+    ensure_database_ready()
+
 
 @login.user_loader
 def load_user(user_id):

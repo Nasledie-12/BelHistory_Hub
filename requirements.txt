@@ -8,3 +8,4 @@ cryptography
 python-dotenv
 Pillow
 gunicorn
+psycopg2-binary

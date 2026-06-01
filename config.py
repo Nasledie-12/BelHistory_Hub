@@ -25,7 +25,13 @@ def _load_or_create_secret_key():
     SECRET_KEY_PATH.write_text(secret, encoding='utf-8')
     return secret
 
+def _normalize_database_url(url):
+    if url.startswith('postgres://'):
+        return url.replace('postgres://', 'postgresql://', 1)
+    return url
+
+
 class Config:
     SECRET_KEY = _load_or_create_secret_key()
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or f'sqlite:///{DEFAULT_SQLITE_PATH.as_posix()}'
+    SQLALCHEMY_DATABASE_URI = _normalize_database_url(os.environ['DATABASE_URL']) if os.environ.get('DATABASE_URL') else f'sqlite:///{DEFAULT_SQLITE_PATH.as_posix()}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
